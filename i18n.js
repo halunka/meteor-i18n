@@ -6,6 +6,7 @@ i18n._trns = new ReactiveDict('i18nTrns')
 i18n._acts = {}
 
 i18n.add = function i18nAdd (defTrns, trnsObj) {
+  _.extend(trnsObj, this.state.get('langs'))
   trnsObj[this.state.get('default')] = defTrns
   return this.db.upsert(trnsObj, { $set: trnsObj })
 }

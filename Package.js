@@ -8,7 +8,7 @@ Package.describe({
 Package.onUse(function (api) {
   api.export('i18n')
   api.versionsFrom('METEOR@1.1')
-  api.use(['reactive-dict', 'mongo', 'templating'])
+  api.use(['reactive-dict', 'mongo', 'templating', 'underscore'])
   api.addFiles([
     'i18n.js'
   ])
