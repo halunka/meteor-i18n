@@ -20,5 +20,5 @@ i18n._('Hello Dolly', 'de')
 ```
 
 ```html
-<p>{{ _ "Hello Dolly" }}</p>
+<p>{{ i18n "Hello Dolly" }}</p>
 ```

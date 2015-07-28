@@ -6,6 +6,10 @@ Package.describe({
 })
 
 Package.onUse(function (api) {
+  api.export('i18n')
   api.versionsFrom('METEOR@1.1')
-  api.use('mongo')
+  api.use(['reactive-dict', 'mongo', 'templating'])
+  api.addFiles([
+    'i18n.js'
+  ])
 })
