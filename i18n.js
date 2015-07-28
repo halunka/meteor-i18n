@@ -2,8 +2,8 @@ i18n = {}
 
 i18n.db = new Mongo.Collection('halunka:i18n')
 i18n.state = new ReactiveDict('i18nValues')
-i18n.trns = new ReactiveDict('i18nTrns')
-i18n.acts = {}
+i18n._trns = new ReactiveDict('i18nTrns')
+i18n._acts = {}
 
 i18n.add = function i18nAdd (defTrns, trnsObj) {
   trnsObj[this.state.get('default')] = defTrns
@@ -17,9 +17,9 @@ i18n.get = function i18nget (key, lang) {
   var trns
   query[this.state.get('default')] = key
   act = this.db.findOne.bind(this.db, query)
-  this.acts[key + lang] = act
-  this.trns.set(key + lang, act())
-  trns = this.trns.get(key + lang)
+  this._acts[key + lang] = act
+  this._trns.set(key + lang, act())
+  trns = this._trns.get(key + lang)
   return (trns && trns[lang])
 }
 
@@ -52,8 +52,8 @@ i18n.listLang = function i18nList () {
 
 i18n.updateTrns = function i18nUpdateTrns () {
   var self = this
-  _.each(this.acts, function (act, key) {
-    self.trns.set(key, act())
+  _.each(this._acts, function (act, key) {
+    self._trns.set(key, act())
   })
 }
 
