@@ -20,11 +20,11 @@ i18n.addLang = function i18nAddLang (key, str) {
   this.state.set('langs', langs)
 }
 
-i18n.set = function i18nSet (lang) {
+i18n.setLang = function i18nSet (lang) {
   return this.state.set('currLang', lang)
 }
 
-i18n.get = function i18nGet () {
+i18n.getLang = function i18nGet () {
   return this.state.get('currLang') || this.state.get('default') || 'en'
 }
 
@@ -37,7 +37,7 @@ i18n.list = function i18nList () {
   })
 }
 
-i18n._ = function i18n_ (key, lang) {
+i18n.get = function i18nget (key, lang) {
   lang = typeof lang == 'string' ? lang : this.get()
   var query = {}
   var act
@@ -64,7 +64,7 @@ if(Meteor.isServer) {
 }
 
 if(Meteor.isClient) {
-  Meteor.subscribe('AllTranslations', function () {
+  i18n.sub = Meteor.subscribe('AllTranslations', function () {
     i18n.updateTrns()
   })
   Template.registerHelper('i18n_', i18n._.bind(i18n))
