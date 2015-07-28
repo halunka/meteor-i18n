@@ -67,6 +67,6 @@ if(Meteor.isClient) {
   i18n.sub = Meteor.subscribe('AllTranslations', function () {
     i18n.updateTrns()
   })
-  Template.registerHelper('i18n_', i18n._.bind(i18n))
-  Template.registerHelper('i18nList', i18n.list.bind(i18n))
+  Template.registerHelper('i18nget', i18n.get.bind(i18n))
+  Template.registerHelper('i18nlist', i18n.listLang.bind(i18n))
 }
