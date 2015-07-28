@@ -5,6 +5,7 @@ Lightweight, reactive, isomorphic, extendable i18n package for meteor using Mong
 
 ```js
 i18n.default('en')
+i18n.addLang('de', 'Deutsch')
 i18n.add('Hello Dolly', {
   de: 'Hallo Dolly',
   it: 'Ciao Dolly'
