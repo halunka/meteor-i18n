@@ -1,4 +1,4 @@
-# meteor-i18n - 0.0.1 - early alpha
+# meteor-i18n - 0.0.2 - alpha
 Lightweight, reactive, isomorphic, extendable i18n package for meteor using MongoDB
 
 ## Usage
