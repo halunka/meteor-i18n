@@ -13,8 +13,6 @@ i18n.add = function i18nAdd (defTrns, trnsObj) {
 
 i18n.get = function i18nget (key, lang) {
   lang = typeof lang == 'string' ? lang : i18n.getLang()
-  console.log(i18n.db.find().fetch())
-  console.log([i18n._trns.get(key), key])
   return maybeGet(i18n._trns.get(key), lang)
 }
 
