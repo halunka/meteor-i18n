@@ -4,22 +4,24 @@ Lightweight, reactive, isomorphic, extendable i18n package for meteor using Mong
 ## Usage
 
 ```js
-i18n.default('en')
+i18n.defaultLang('en')
 i18n.addLang('de', 'Deutsch')
 i18n.add('Hello Dolly', {
   de: 'Hallo Dolly',
   it: 'Ciao Dolly'
 })
-i18n.set('en')
-i18n.get()
+i18n.setLang('en')
+i18n.getLang()
 // -> en
-i18n.set('it')
-i18n._('Hello Dolly')
+i18n.setLang('it')
+i18n.get('Hello Dolly')
 // -> 'Ciao Dolly'
-i18n._('Hello Dolly', 'de')
+i18n.get('Hello Dolly', 'de')
 // -> 'Hallo Dolly'
 ```
 
 ```html
 <p>{{ i18n "Hello Dolly" }}</p>
 ```
+
+## API

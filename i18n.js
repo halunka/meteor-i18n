@@ -39,7 +39,9 @@ i18n.setLang = function i18nSet (lang) {
 }
 
 i18n.getLang = function i18nGet () {
-  return this.state.get('currLang') || this.state.get('default') || 'en'
+  return this.state.get('currLang') ||
+    this.state.get('default') ||
+    _.keys(this.state.get('langs'))[0]
 }
 
 i18n.listLang = function i18nList () {
