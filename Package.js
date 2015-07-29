@@ -13,3 +13,8 @@ Package.onUse(function (api) {
     'i18n.js'
   ])
 })
+
+Package.onTest(function (api) {
+  api.use(['tinytest', 'halunka:i18n', 'underscore', 'reactive-dict'])
+  api.addFiles('tests/i18n.js')
+})
