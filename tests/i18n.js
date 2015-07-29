@@ -19,6 +19,7 @@ Tinytest.add('i18n.setLang', function (test) {
 })
 
 Tinytest.add('i18n.defaultLang', function (test) {
+  i18n.addLang('en', 'English')
   i18n.defaultLang('en')
   test.equal(i18n.state.get('default'), 'en', 'Should set state.default')
   clearState()
@@ -43,10 +44,26 @@ if(Meteor.isServer) {
   Tinytest.add('i18n.add', function (test) {
     i18n.defaultLang('en')
     i18n.addLang('ru', 'Russian')
-    i18n.add('test.i18n.add', {})
+    i18n.add('test.i18n.add', {
+      de: 'test'
+    })
     test.isTrue(i18n.db.find({en: 'test.i18n.add'}).count() > 0, 'Add a new translation')
     test.isTrue(i18n.db.findOne({en: 'test.i18n.add'}).ru, 'Set defaults')
     i18n.add('test.i18n.add', {})
     test.equal(i18n.db.find({en: 'test.i18n.add'}).count(), 1, 'Use upsert')
+    test.equal(i18n.db.findOne({en: 'test.i18n.add'})['de'], 'test', 'Insert the object passed')
   })
 }
+
+Tinytest.add('i18n.get', function (test) {
+  if(Meteor.isServer) {
+    i18n.addLang('en', 'English')
+    i18n.addLang('de', 'Deutsch')
+    i18n.defaultLang('en')
+    i18n.add('test.i18n.geten', {
+      de: 'test.i18n.getde'
+    })
+    i18n.setLang('de')
+    test.equal(i18n.get('test.i18n.geten'), 'test.i18n.getde', 'Should return the string in the current lang')
+  }
+})
