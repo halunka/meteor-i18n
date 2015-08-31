@@ -59,11 +59,15 @@ Tinytest.add('i18n.get', function (test) {
   if(Meteor.isServer) {
     i18n.addLang('en', 'English')
     i18n.addLang('de', 'Deutsch')
+    i18n.addLang('rg', 'Rumantsch')
     i18n.defaultLang('en')
     i18n.add('test.i18n.geten', {
-      de: 'test.i18n.getde'
+      de: 'test.i18n.getde',
+      rg: 'test.i18n.getrg'
     })
     i18n.setLang('de')
     test.equal(i18n.get('test.i18n.geten'), 'test.i18n.getde', 'Should return the string in the current lang')
+    i18n.setLang('rg')
+    test.equal(i18n.get('test.i18n.geten'), 'test.i18n.getrg', 'Should be able to handle more that two languages')
   }
 })
