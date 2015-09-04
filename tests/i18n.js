@@ -30,9 +30,9 @@ setTimeout(function () {
     clearState(done)
   })
 
-  Tinytest.addAsync('i18n.defaultLanguage', function (test, done) {
+  Tinytest.addAsync('i18n.setDefaultLanguage', function (test, done) {
     i18n.addLanguage('en', 'English')
-    i18n.defaultLanguage('en')
+    i18n.setDefaultLanguage('en')
     test.equal(i18n.state.get('default'), 'en', 'Should set state.default')
     clearState(done)
   })
@@ -40,7 +40,7 @@ setTimeout(function () {
   Tinytest.addAsync('i18n.getLanguage', function (test, done) {
     i18n.addLanguage('en', 'English')
     test.equal(i18n.getLanguage(), 'en', 'Return the first value if no default and no currLang is set')
-    i18n.defaultLanguage('ru')
+    i18n.setDefaultLanguage('ru')
     test.equal(i18n.getLanguage(), 'ru', 'Return the default if no currLang is set')
     i18n.setLanguage('de')
     test.equal(i18n.getLanguage(), 'de', 'Return the currLang if it\'s set')
@@ -55,7 +55,7 @@ setTimeout(function () {
   })
 
   Tinytest.addAsync('i18n.add', function (test, done) {
-    i18n.defaultLanguage('en')
+    i18n.setDefaultLanguage('en')
     i18n.addLanguage('ru', 'Russian')
     i18n.add({
       en: 'test.i18n.add',
@@ -74,7 +74,7 @@ setTimeout(function () {
     i18n.addLanguage('en', 'English')
     i18n.addLanguage('de', 'Deutsch')
     i18n.addLanguage('rg', 'Rumantsch')
-    i18n.defaultLanguage('en')
+    i18n.setDefaultLanguage('en')
     i18n.add({
       en: 'test.i18n.geten',
       de: 'test.i18n.getde',
