@@ -5,17 +5,22 @@ i18n.state = new ReactiveDict('i18nValues')
 i18n._trns = new ReactiveDict('i18nTrns')
 i18n.state.set('langs', {})
 
-i18n.add = function i18nAdd (defTrns, trnsObj, cb) {
-  var id
-  var done = function () {
-    i18n.updateTranslations()
-    if(cb) cb()
+i18n.add = function i18nAdd (dataArr, cb) {
+  var done = cb ?
+    _.compose(cb, i18n.updateTranslations):
+    i18n.updateTranslations
+  dataArr = [].concat(dataArr)
+  for(var i = 0; i < dataArr.length - 1; i++) {
+    i18n.insert(dataArr[i])
   }
-  trnsObj = _.extend(i18n.state.get('langs'), trnsObj)
-  trnsObj[i18n.getDefaultLanguage()] = defTrns
-  old = i18n.db.findOne(trnsObj)
-  if(old) return i18n.db.update(old._id, { $set: trnsObj }, done)
-  return i18n.db.insert(trnsObj, done)
+  i18n.insert(dataArr[i], done)
+}
+
+i18n.insert = function i18nInsert (translations, done) {
+  var old = i18n.db.findOne(translations)
+  translations = _.extend(i18n.state.get('langs'), translations)
+  if(old) return i18n.db.update(old._id, { $set: translations }, done)
+  return i18n.db.insert(translations, done)
 }
 
 i18n.get = function i18nget (key, lang) {
@@ -29,9 +34,9 @@ i18n.defaultLanguage = function i18nDefaultLang (newValue) {
   return newValue
 }
 
-i18n.getDefaultLanguage = function i18nGetDefaultLanguage (newValue) {
+i18n.getDefaultLanguage = function i18nGetDefaultLanguage () {
   return i18n.state.get('default') ||
-    _.keys(i18n.state.get('langs'))[0]
+    _.keys(i18n.state.get('langs') || [])[0]
 }
 
 i18n.addLanguage = function i18nAddLanguage (key, str) {

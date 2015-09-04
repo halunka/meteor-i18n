@@ -57,12 +57,13 @@ setTimeout(function () {
   Tinytest.addAsync('i18n.add', function (test, done) {
     i18n.defaultLanguage('en')
     i18n.addLanguage('ru', 'Russian')
-    i18n.add('test.i18n.add', {
+    i18n.add({
+      en: 'test.i18n.add',
       de: 'test'
     }, function () {
       test.isTrue(i18n.db.find({en: 'test.i18n.add'}).count() > 0, 'Add a new translation')
       test.isTrue(i18n.db.findOne({en: 'test.i18n.add'}).ru, 'Set defaults')
-      i18n.add('test.i18n.add', {})
+      i18n.add({en: 'test.i18n.add'})
       test.equal(i18n.db.find({en: 'test.i18n.add'}).count(), 1, 'Use upsert')
       test.equal(i18n.db.findOne({en: 'test.i18n.add'})['de'], 'test', 'Insert the object passed')
       clearState(done)
@@ -74,7 +75,8 @@ setTimeout(function () {
     i18n.addLanguage('de', 'Deutsch')
     i18n.addLanguage('rg', 'Rumantsch')
     i18n.defaultLanguage('en')
-    i18n.add('test.i18n.geten', {
+    i18n.add({
+      en: 'test.i18n.geten',
       de: 'test.i18n.getde',
       rg: 'test.i18n.getrg'
     }, function () {
