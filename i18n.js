@@ -81,5 +81,5 @@ if(Meteor.isClient) {
     i18n.updateTranslations()
   })
   Template.registerHelper('i18nget', i18n.get)
-  Template.registerHelper('i18nlist', i18n.listLang)
+  Template.registerHelper('i18nlist', i18n.listLanguage)
 }
