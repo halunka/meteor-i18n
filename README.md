@@ -1,19 +1,19 @@
-# meteor-i18n - 0.0.4 - alpha
+# meteor-i18n - 0.0.5 - alpha
 Lightweight, reactive, isomorphic, extendable i18n package for meteor using MongoDB
 
 ## Usage
 
 ```js
-i18n.defaultLang('en')
-i18n.addLang('de', 'Deutsch')
+i18n.defaultLanguage('en')
+i18n.addLanguage('de', 'Deutsch')
 i18n.add('Hello Dolly', {
   de: 'Hallo Dolly',
   it: 'Ciao Dolly'
 })
-i18n.setLang('en')
+i18n.setLanguage('en')
 i18n.getLang()
 // -> en
-i18n.setLang('it')
+i18n.setLanguage('it')
 i18n.get('Hello Dolly')
 // -> 'Ciao Dolly'
 i18n.get('Hello Dolly', 'de')
@@ -37,19 +37,19 @@ Adds a translation to the DB.
 ### i18n.get(key[, languageKey])
 Returns a translation for either the passed language or the current one.
 
-### i18n.defaultLang(language)
+### i18n.defaultLanguage(language)
 Sets a default language.
 
-### i18n.addLang(key, name)
+### i18n.addLanguage(key, name)
 Adds a new language.
 
-### i18n.setLang(language)
+### i18n.setLanguage(language)
 Sets the current language.
 
-### i18n.getLang()
+### i18n.getLanguage()
 Returns the current language. Falls back to the default language and the first language added
 
-### i18n.listLang()
+### i18n.listLanguage()
 Returns an array of all added languages in the following format:
 ```js
 {
@@ -58,7 +58,7 @@ Returns an array of all added languages in the following format:
 }
 ```
 
-### i18n.updateTrns()
+### i18n.updateTranslations()
 Updates all translations. This is mainly meant for internal usage.
 
 ### Helper: i18nget
