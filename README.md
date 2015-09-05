@@ -6,8 +6,10 @@ Lightweight, reactive, isomorphic, extendable i18n package for meteor using Mong
 _server_
 
 ```js
-i18n.setDefaultLanguage('en')
+i18n.addLanguage('en', 'English')
 i18n.addLanguage('de', 'Deutsch')
+i18n.addLanguage('it', 'Italiano')
+i18n.setDefaultLanguage('en')
 i18n.add({
   en: 'Hello Dolly',
   de: 'Hallo Dolly',
@@ -28,6 +30,8 @@ _client_
 By default the client can't add translations. You can simply set up allow/deny rules on the database.
 
 ```js
+i18n.addLanguage('de', 'Deutsch')
+i18n.addLanguage('en', 'English')
 i18n.setDefaultLanguage('en')
 i18n.loadAll(function () {
   i18n.setLanguage('it')
@@ -94,5 +98,4 @@ An interface to `i18n.get`.
 An interface to `i18n.listLang`.
 
 # TODO
-* smarter publish functions
 * read JSON files
