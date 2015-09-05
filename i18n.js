@@ -15,6 +15,7 @@ i18n.add = function i18nAdd (dataArr, cb) {
     i18n.insert(dataArr[i])
   }
   i18n.insert(dataArr[i], done)
+  return dataArr
 }
 
 i18n.insert = function i18nInsert (translations, done) {
@@ -86,15 +87,21 @@ function constructObject (key, value) {
 }
 
 if(Meteor.isServer) {
+  var fs = require('fs')
+
   Meteor.publish('i18n:all', function () {
     return i18n.db.find()
   })
   Meteor.publish('i18n:specific', function (lang) {
     return i18n.db.find({ fields: [lang] })
   })
-}
 
-if(Meteor.isClient) {
+  i18n.parseJSONFile = function i18nParseJSONFile (path) {
+    if(!fs.existsSync(path)) throw 'halunka:i18n: File doesn\'t exist: ' + path
+    return i18n.add(JSON.parse(fs.readFileSync(path)))
+  }
+
+} else {
   Template.registerHelper('i18nget', i18n.get)
   Template.registerHelper('i18nlist', i18n.listLanguage)
 
