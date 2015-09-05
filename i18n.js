@@ -87,7 +87,6 @@ function constructObject (key, value) {
 }
 
 if(Meteor.isServer) {
-  var fs = require('fs')
 
   Meteor.publish('i18n:all', function () {
     return i18n.db.find()
@@ -95,11 +94,6 @@ if(Meteor.isServer) {
   Meteor.publish('i18n:specific', function (lang) {
     return i18n.db.find({ fields: [lang] })
   })
-
-  i18n.parseJSONFile = function i18nParseJSONFile (path) {
-    if(!fs.existsSync(path)) throw 'halunka:i18n: File doesn\'t exist: ' + path
-    return i18n.add(JSON.parse(fs.readFileSync(path)))
-  }
 
 } else {
   Template.registerHelper('i18nget', i18n.get)
