@@ -18,15 +18,11 @@ i18n.add = function i18nAdd (dataArr, cb) {
 }
 
 i18n.insert = function i18nInsert (translations, done) {
-  var old
-  var query = {}
+  var oldId
   var lang = i18n.getDefaultLanguage()
-  query[lang] = translations[lang]
-  old = i18n.db.findOne(query)
+  oldId = ( i18n.db.findOne(constructObject(lang, translations[lang])) || {} )._id
   translations = _.extend(i18n.state.get('langs'), translations)
-  if(old) return i18n.db.update(old._id, { $set: translations }, function () {
-    done()
-  })
+  if(oldId) return i18n.db.update(oldId, { $set: translations }, done)
   return i18n.db.insert(translations, done)
 }
 
@@ -41,10 +37,8 @@ i18n.getAll = function i18nGetAll (key) {
 }
 
 i18n.reactiveQuery = function i18nReactiveQuery (key) {
-  var query = {}
-  query[i18n.getDefaultLanguage()] = key
   i18n.dep.depend()
-  return i18n.db.findOne(query)
+  return i18n.db.findOne(constructObject(i18n.getDefaultLanguage(), key))
 }
 
 i18n.setDefaultLanguage = function i18nSetDefaultLang (newValue) {
@@ -83,6 +77,12 @@ i18n.listLanguages = function i18nListLanguages () {
 
 function maybeGet (obj, key) {
   return obj ? obj[key] : ''
+}
+
+function constructObject (key, value) {
+  var obj = {}
+  obj[key] = value
+  return obj
 }
 
 if(Meteor.isServer) {

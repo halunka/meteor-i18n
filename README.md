@@ -84,9 +84,6 @@ Loads translations for a specific language on the client and the calls the `call
 ### i18n.loadSpecific(callback) - _client_
 Loads all translation on the client and calls the callback function.
 
-### i18n.updateTranslations()
-This package stores all Translations in the database. `i18n` initializes, `i18n.updateTranslations` is called, which takes all data inside the DB and adds it to a reactive dictionary. The translations are stored inside of that object with the default language's translation. So when you call `get`, the data is retrieved from that dictionary using the first argument as a key. This function is mainly meant for internal use.
-
 ### i18n.db
 The Mongo DB.
 
