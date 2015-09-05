@@ -68,8 +68,27 @@ setTimeout(function () {
       i18n.add({en: 'test.i18n.add'})
       test.equal(i18n.db.find({en: 'test.i18n.add'}).count(), 1, 'Use upsert')
       test.equal(i18n.db.findOne({en: 'test.i18n.add'})['de'], 'test', 'Insert the object passed')
-      clearState(done)
     })
+    i18n.add(
+      [
+        {
+          en: 'test.i18n.add:Multi:en:1',
+          de: 'test.i18n.add:Multi:de:1',
+        },
+        {
+          en: 'test.i18n.add:Multi:en:2',
+          de: 'test.i18n.add:Multi:de:2',
+        },
+        {
+          en: 'test.i18n.add:Multi:en:3',
+          de: 'test.i18n.add:Multi:de:3',
+        }
+      ],
+      function () {
+        test.equal(i18n.db.find().count(), 4, 'Add an array of translations')
+        clearState(done)
+      }
+    )
   })
 
   Tinytest.addAsync('i18n.get', function (test, done) {
