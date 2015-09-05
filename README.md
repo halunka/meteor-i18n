@@ -4,7 +4,7 @@ Lightweight, reactive, isomorphic, extendable i18n package for meteor using Mong
 ## Usage
 
 ```js
-i18n.defaultLanguage('en')
+i18n.setDefaultLanguage('en')
 i18n.addLanguage('de', 'Deutsch')
 i18n.add({
   en: 'Hello Dolly',
@@ -38,7 +38,7 @@ Adds a translation to the DB.
 ### i18n.get(key[, languageKey])
 Returns a translation for either the passed language or the current one.
 
-### i18n.defaultLanguage(language)
+### i18n.setDefaultLanguage(language)
 Sets a default language.
 
 ### i18n.addLanguage(key, name)
@@ -67,3 +67,7 @@ An interface to `i18n.get`.
 
 ### Helper: i18nList
 An interface to `i18n.listLang`.
+
+# TODO
+* getAll
+* smarter publish functions
