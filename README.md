@@ -63,7 +63,7 @@ Returns an array of all added languages in the following format:
 ```
 
 ### i18n.updateTranslations()
-Updates all translations. This is mainly meant for internal usage.
+This package stores all Translations in the database. `i18n` initializes, `i18n.updateTranslations` is called, which takes all data inside the DB and adds it to a reactive dictionary. The translations are stored inside of that object with the default language's translation. So when you call `get`, the data is retrieved from that dictionary using the first argument as a key. This function is mainly meant for internal use.
 
 ### Helper: i18nget
 An interface to `i18n.get`.
