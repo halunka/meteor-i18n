@@ -22,7 +22,7 @@ Package.onUse(function (api) {
 
 Package.registerBuildPlugin({
   name: 'i18n.json',
-  sources: ['plugin/build.js']
+  sources: ['i18n.build.js']
 })
 
 Package.onTest(function (api) {
