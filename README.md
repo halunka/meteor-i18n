@@ -32,11 +32,14 @@ Template.registerHelper('_', i18n.get)
 ```
 
 ## API
-### i18n.add(key, otherTranslations)
-Adds a translation to the DB.
+### i18n.add(translations, callback)
+Adds a translation to the DB. Translations can be an object or an array of objects.
 
 ### i18n.get(key[, languageKey])
 Returns a translation for either the passed language or the current one.
+
+### i18n.getAll(key)
+Returns an object with all translations with the key.
 
 ### i18n.setDefaultLanguage(language)
 Sets a default language.
@@ -69,5 +72,5 @@ An interface to `i18n.get`.
 An interface to `i18n.listLang`.
 
 # TODO
-* getAll
 * smarter publish functions
+* read JSON files
