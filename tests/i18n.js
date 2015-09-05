@@ -12,6 +12,8 @@ if(Meteor.isServer) {
   })
 }
 
+if(Meteor.isClient) i18n.loadAll()
+
 setTimeout(function () {
 
   Tinytest.add('i18n', function (test) {
@@ -80,11 +82,24 @@ setTimeout(function () {
       de: 'test.i18n.getde',
       rg: 'test.i18n.getrg'
     }, function () {
+      var testString
       i18n.setLanguage('de')
       test.equal(i18n.get('test.i18n.geten'), 'test.i18n.getde', 'Should return the string in the current lang')
       i18n.setLanguage('rg')
       test.equal(i18n.get('test.i18n.geten'), 'test.i18n.getrg', 'Should be able to handle more that two languages')
-      clearState(done)
+      Tracker.autorun(function () {
+        testString = i18n.get('test.i18n.geten')
+      })
+      i18n.add({
+        en: 'test.i18n.geten',
+        de: 'test.i18n.getde',
+        rg: 'test.i18n.getrg_new'
+      }, function () {
+        Meteor.setTimeout(function () {
+          test.equal(testString, 'test.i18n.getrg_new', 'get should react to changes in the data')
+          clearState(done)
+        },0)
+      })
     })
   })
 
