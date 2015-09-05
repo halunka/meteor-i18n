@@ -81,15 +81,29 @@ function maybeGet (obj, key) {
 i18n.updateTranslations()
 
 if(Meteor.isServer) {
-  Meteor.publish('AllTranslations', function () {
+  Meteor.publish('i18n:all', function () {
     return i18n.db.find()
+  })
+  Meteor.publish('i18n:specific', function (lang) {
+    return i18n.db.find({ fields: [lang] })
   })
 }
 
 if(Meteor.isClient) {
-  i18n.sub = Meteor.subscribe('AllTranslations', function () {
-    i18n.updateTranslations()
-  })
   Template.registerHelper('i18nget', i18n.get)
   Template.registerHelper('i18nlist', i18n.listLanguage)
+
+  i18n.loadSpecific = function i18nLoadSpecific (lang, cb) {
+    Meteor.subscribe('i18n:specific', lang, function () {
+      i18n.updateTranslations()
+      cb()
+    })
+  }
+
+  i18n.loadAll = function i18nLoadAll (cb) {
+    Meteor.subscribe('i18n:all', function () {
+      i18n.updateTranslations()
+      cb()
+    })
+  }
 }
