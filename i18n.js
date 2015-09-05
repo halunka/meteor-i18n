@@ -2,13 +2,14 @@ i18n = {}
 
 i18n.db = new Mongo.Collection('halunka:i18n')
 i18n.state = new ReactiveDict('i18nValues')
-i18n._trns = new ReactiveDict('i18nTrns')
 i18n.state.set('langs', {})
+i18n.dep = new Tracker.Dependency
+i18n.depChanged = i18n.dep.changed.bind(i18n.dep)
 
 i18n.add = function i18nAdd (dataArr, cb) {
   var done = cb ?
-    _.compose(cb, i18n.updateTranslations):
-    i18n.updateTranslations
+    _.compose(cb, i18n.depChanged):
+    i18n.depChanged
   dataArr = [].concat(dataArr)
   for(var i = 0; i < dataArr.length - 1; i++) {
     i18n.insert(dataArr[i])
@@ -17,25 +18,37 @@ i18n.add = function i18nAdd (dataArr, cb) {
 }
 
 i18n.insert = function i18nInsert (translations, done) {
-  var old = i18n.db.findOne(translations)
+  var old
+  var query = {}
+  var lang = i18n.getDefaultLanguage()
+  query[lang] = translations[lang]
+  old = i18n.db.findOne(query)
   translations = _.extend(i18n.state.get('langs'), translations)
-  if(old) return i18n.db.update(old._id, { $set: translations }, done)
+  if(old) return i18n.db.update(old._id, { $set: translations }, function () {
+    done()
+  })
   return i18n.db.insert(translations, done)
 }
 
 i18n.get = function i18nget (key, lang) {
   lang = typeof lang == 'string' ? lang : i18n.getLanguage()
-  return maybeGet(i18n._trns.get(key), lang)
+  return maybeGet(i18n.reactiveQuery(key), lang)
 }
 
-i18n.getAll = function i18nGetAll (key, lang) {
+i18n.getAll = function i18nGetAll (key) {
   lang = typeof lang == 'string' ? lang : i18n.getLanguage()
-  return i18n._trns.get(key)
+  return _.omit(i18n.reactiveQuery(key), '_id')
+}
+
+i18n.reactiveQuery = function i18nReactiveQuery (key) {
+  var query = {}
+  query[i18n.getDefaultLanguage()] = key
+  i18n.dep.depend()
+  return i18n.db.findOne(query)
 }
 
 i18n.setDefaultLanguage = function i18nSetDefaultLang (newValue) {
   i18n.state.set('default', newValue)
-  i18n.updateTranslations()
   return newValue
 }
 
@@ -68,17 +81,9 @@ i18n.listLanguages = function i18nListLanguages () {
   })
 }
 
-i18n.updateTranslations = function i18nUpdateTrns () {
-  i18n.db.find().forEach(function (doc) {
-    i18n._trns.set(doc[i18n.getDefaultLanguage()], _.omit(doc, '_id'))
-  })
-}
-
 function maybeGet (obj, key) {
   return obj ? obj[key] : ''
 }
-
-i18n.updateTranslations()
 
 if(Meteor.isServer) {
   Meteor.publish('i18n:all', function () {
@@ -95,15 +100,15 @@ if(Meteor.isClient) {
 
   i18n.loadSpecific = function i18nLoadSpecific (lang, cb) {
     Meteor.subscribe('i18n:specific', lang, function () {
-      i18n.updateTranslations()
-      cb()
+      i18n.depChanged()
+      if(cb) cb()
     })
   }
 
   i18n.loadAll = function i18nLoadAll (cb) {
     Meteor.subscribe('i18n:all', function () {
-      i18n.updateTranslations()
-      cb()
+      i18n.depChanged()
+      if(cb) cb()
     })
   }
 }
