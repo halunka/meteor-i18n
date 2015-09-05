@@ -88,4 +88,26 @@ setTimeout(function () {
     })
   })
 
+  Tinytest.addAsync('i18n.getAll', function (test, done) {
+    i18n.addLanguage('en', 'English')
+    i18n.addLanguage('de', 'Deutsch')
+    i18n.addLanguage('rg', 'Rumantsch')
+    i18n.add({
+      en: 'test.i18n.getAllen',
+      de: 'test.i18n.getAllde',
+      rg: 'test.i18n.getAllrg'
+    }, function () {
+      test.equal(
+        i18n.getAll('test.i18n.getAllen'),
+        {
+          en: 'test.i18n.getAllen',
+          de: 'test.i18n.getAllde',
+          rg: 'test.i18n.getAllrg'
+        },
+        'getAll should return an object with all translationse'
+      )
+      clearState(done)
+    })
+  })
+
 }, 0)

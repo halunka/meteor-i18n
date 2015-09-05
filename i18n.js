@@ -28,6 +28,11 @@ i18n.get = function i18nget (key, lang) {
   return maybeGet(i18n._trns.get(key), lang)
 }
 
+i18n.getAll = function i18nGetAll (key, lang) {
+  lang = typeof lang == 'string' ? lang : i18n.getLanguage()
+  return i18n._trns.get(key)
+}
+
 i18n.setDefaultLanguage = function i18nSetDefaultLang (newValue) {
   i18n.state.set('default', newValue)
   i18n.updateTranslations()
