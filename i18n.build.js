@@ -5,7 +5,7 @@ Plugin.registerSourceHandler('i18n.json', function (compileStep) {
     data: [
       'if(Meteor.isServer) i18n.add(',
       compileStep.read().toString('utf8'), ')',
-      compileStep.inputPath.split('.i18n.json')[0].split('.').reverse()[0],
+      compileStep.inputPath.split('.i18n.json')[0].split('.')[1],
     ].join('')
   })
 })
