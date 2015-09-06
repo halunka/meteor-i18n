@@ -9,19 +9,26 @@ _server_
 i18n.addLanguage('en', 'English')
 i18n.addLanguage('de', 'Deutsch')
 i18n.addLanguage('it', 'Italiano')
-i18n.setDefaultLanguage('en')
 i18n.add({
-  en: 'Hello Dolly',
-  de: 'Hallo Dolly',
-  it: 'Ciao Dolly'
+  welcome: {
+    salutation: {
+      en: 'Hello Dolly',
+      de: 'Hallo Dolly'
+    }
+  }
 })
+i18n.add({
+  welcome: {
+    salutation: 'Ciao Dolly'
+  }
+}, 'it')
 i18n.setLanguage('en')
 i18n.getLanguage()
 // -> en
 i18n.setLanguage('it')
-i18n.get('Hello Dolly')
+i18n.get('welcome.salutation')
 // -> 'Ciao Dolly'
-i18n.get('Hello Dolly', 'de')
+i18n.get('welcome.salutation', 'de')
 // -> 'Hallo Dolly'
 ```
 
@@ -32,17 +39,16 @@ By default the client can't add translations. You can simply set up allow/deny r
 ```js
 i18n.addLanguage('de', 'Deutsch')
 i18n.addLanguage('en', 'English')
-i18n.setDefaultLanguage('en')
 i18n.loadAll(function () {
   i18n.setLanguage('it')
-  i18n.get('Hello Dolly')
+  i18n.get('welcome.salutation')
   // -> 'Ciao Dolly'
-  i18n.get('Hello Dolly', 'de')
+  i18n.get('welcome.salutation', 'de')
 })
 ```
 
 ```html
-<p>{{ i18nget "Hello Dolly" }}</p>
+<p>{{ i18nget "welcome.salutation" }}</p>
 ```
 
 The name of the default-helper is kind of clunky. So I'd add the following helper:
@@ -54,34 +60,45 @@ Template.registerHelper('_', i18n.get)
 ## API
 
 ### translations.i18n.json
-`halunka:i18n` adds the contents of files with the `.i18n.json` extension to the database.
+`halunka:i18n` adds the contents of files with the `.i18n.json` extension to the database. The filenames cannot contain dots.
 Example:
 ```json
-[
-  {
-    "en": "Hello Dolly",
-    "de": "Hallo Dolly",
-    "it": "Ciao Dolly"
-  },
-  {
-    "en": "Hello Sam",
-    "de": "Hallo Sam",
-    "it": "Ciao Sam"
+{
+  "salutations": {
+    dolly: {
+      "en": "Hello Dolly",
+      "de": "Hallo Dolly",
+      "it": "Ciao Dolly"
+    },
+    sam: {
+      "en": "Hello Sam",
+      "de": "Hallo Sam",
+      "it": "Ciao Sam"
+    }
   }
-]
+}
 ```
 
-### i18n.add(translations, callback) - _common_
-Adds a translation to the DB. Translations can be an object or an array of objects.
+### i18n.add(translations[, language]) - _server_
+Adds a translation to the DB. This function is only availible on the server, mainly because you can't `upsert` from the client. Also it seems like an edge-case. If you want to use it on the client you can do something like this:
+
+```js
+if(Meteor.isServer) {
+  Meteor.methods({
+    'i18n:add': i18n.add
+  })
+} else {
+  i18n.add = function (data, lang) {
+    Meteor.call('i18n:add', data, lang)
+  }
+}
+```
 
 ### i18n.get(key[, languageKey]) - _common_
 Returns a translation for either the passed language or the current one.
 
 ### i18n.getAll(key) - _common_
-Returns an object with all translations with the key.
-
-### i18n.setDefaultLanguage(language) - _common_
-Sets a default language.
+Returns an object with all translations with a key.
 
 ### i18n.addLanguage(key, name) - _common_
 Adds a new language.
@@ -92,7 +109,7 @@ Sets the current language.
 ### i18n.getLanguage() - _common_
 Returns the current language. Falls back to the default language and the first language added
 
-### i18n.listLanguage() - _common_
+### i18n.listLanguages() - _common_
 Returns an array of all added languages in the following format:
 ```js
 {
@@ -104,7 +121,7 @@ Returns an array of all added languages in the following format:
 ### i18n.loadSpecific(language, callback) - _client_
 Loads translations for a specific language on the client and the calls the `callback`.
 
-### i18n.loadSpecific(callback) - _client_
+### i18n.loadAll(callback) - _client_
 Loads all translation on the client and calls the callback function.
 
 ### i18n.db
@@ -117,3 +134,4 @@ An interface to `i18n.get`.
 An interface to `i18n.listLang`.
 
 # TODO
+* load specific groups
