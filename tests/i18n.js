@@ -4,17 +4,31 @@ function clearState (cb) {
   if(cb) return cb()
 }
 
+function autorun (cb) {
+  if(Meteor.isServer)
+    Meteor.setTimeout(cb, 10)
+  else
+    Tracker.autorun(cb)
+}
+
 if(Meteor.isServer) {
   i18n.db.allow({
     insert: function () { return true },
     update: function () { return true },
     remove: function () { return true }
   })
+  Meteor.methods({
+    'i18n:add': i18n.add
+  })
+} else {
+  i18n.add = function (data, lang) {
+    Meteor.call('i18n:add', data, lang)
+  }
 }
 
 if(Meteor.isClient) i18n.loadAll()
 
-setTimeout(function () {
+Meteor.setTimeout(function () {
 
   Tinytest.add('i18n', function (test) {
     test.equal(typeof i18n, 'object', 'Export an object i18n to both client and server')
@@ -32,17 +46,9 @@ setTimeout(function () {
     clearState(done)
   })
 
-  Tinytest.addAsync('i18n.setDefaultLanguage', function (test, done) {
-    i18n.addLanguage('en', 'English')
-    i18n.setDefaultLanguage('en')
-    test.equal(i18n.state.get('default'), 'en', 'Should set state.default')
-    clearState(done)
-  })
-
   Tinytest.addAsync('i18n.getLanguage', function (test, done) {
     i18n.addLanguage('en', 'English')
-    test.equal(i18n.getLanguage(), 'en', 'Return the first value if no default and no currLang is set')
-    i18n.setDefaultLanguage('ru')
+    i18n.setLanguage('ru')
     test.equal(i18n.getLanguage(), 'ru', 'Return the default if no currLang is set')
     i18n.setLanguage('de')
     test.equal(i18n.getLanguage(), 'de', 'Return the currLang if it\'s set')
@@ -57,68 +63,80 @@ setTimeout(function () {
   })
 
   Tinytest.addAsync('i18n.add', function (test, done) {
-    i18n.setDefaultLanguage('en')
+    i18n.setLanguage('en')
     i18n.addLanguage('ru', 'Russian')
     i18n.add({
-      en: 'test.i18n.add',
-      de: 'test'
-    }, function () {
-      test.isTrue(i18n.db.find({en: 'test.i18n.add'}).count() > 0, 'Add a new translation')
-      test.isTrue(i18n.db.findOne({en: 'test.i18n.add'}).ru, 'Set defaults')
-      i18n.add({en: 'test.i18n.add'})
-      test.equal(i18n.db.find({en: 'test.i18n.add'}).count(), 1, 'Use upsert')
-      test.equal(i18n.db.findOne({en: 'test.i18n.add'})['de'], 'test', 'Insert the object passed')
+      i18nAddTest: 'test.i18n.add:de'
+    }, 'de')
+    i18n.add({
+      i18nAddTest: 'test.i18n.add:en'
+    }, 'en')
+    autorun(function (comp) {
+      var allTrs = i18n.getAll('i18nAddTest')
+      if(!(allTrs && allTrs.en && allTrs.de)) return
+      if(comp) comp.stop()
+      test.isTrue(i18n.db.find().count() > 0, 'Add a new translation')
+      i18n.add({i18nAddTest: 'test.i18n.add'}, 'en')
+      autorun(function () {
+        if(i18n.get('i18nAddTest') === 'test.i18n.add')
+        test.equal(i18n.get('i18nAddTest'), 'test.i18n.add', 'Use upsert')
+      })
+      test.equal(i18n.get('i18nAddTest', 'de'), 'test.i18n.add:de', 'Insert the object passed')
     })
-    i18n.add(
-      [
-        {
-          en: 'test.i18n.add:Multi:en:1',
-          de: 'test.i18n.add:Multi:de:1',
-        },
-        {
-          en: 'test.i18n.add:Multi:en:2',
-          de: 'test.i18n.add:Multi:de:2',
-        },
-        {
-          en: 'test.i18n.add:Multi:en:3',
-          de: 'test.i18n.add:Multi:de:3',
-        }
-      ],
-      function () {
-        test.equal(i18n.db.find().count(), 4, 'Add an array of translations')
-        clearState(done)
-      }
-    )
+    i18n.add({
+      'test.i18n.add:Multi:1': 'test.i18n.add:Multi:en:1',
+      'test.i18n.add:Multi:2': 'test.i18n.add:Multi:en:2',
+      'test.i18n.add:Multi:3': 'test.i18n.add:Multi:en:3'
+    }, 'en')
+    i18n.add({
+      'test.i18n.add:Multi:1': 'test.i18n.add:Multi:de:1',
+      'test.i18n.add:Multi:2': 'test.i18n.add:Multi:de:2',
+      'test.i18n.add:Multi:3': 'test.i18n.add:Multi:de:3'
+    }, 'de')
+    autorun(function (comp) {
+      var allTrs = i18n.getAll('test.i18n.add:Multi:1')
+      if(!(allTrs && allTrs.en && allTrs.de)) return
+      if(comp) comp.stop()
+      test.equal(i18n.db.find().count(), 4, 'Add an multiple translations')
+      clearState(done)
+    })
   })
 
   Tinytest.addAsync('i18n.get', function (test, done) {
     i18n.addLanguage('en', 'English')
     i18n.addLanguage('de', 'Deutsch')
     i18n.addLanguage('rg', 'Rumantsch')
-    i18n.setDefaultLanguage('en')
+    i18n.setLanguage('en')
     i18n.add({
-      en: 'test.i18n.geten',
-      de: 'test.i18n.getde',
-      rg: 'test.i18n.getrg'
-    }, function () {
+      'i18n.get': {
+        en: 'test.i18n.geten',
+        de: 'test.i18n.getde',
+        rg: 'test.i18n.getrg'
+      }
+    })
+    autorun(function (comp) {
       var testString
+      if(!i18n.get('i18n.get')) return
+      if(comp) comp.stop()
       i18n.setLanguage('de')
-      test.equal(i18n.get('test.i18n.geten'), 'test.i18n.getde', 'Should return the string in the current lang')
+      test.equal(i18n.get('i18n.get'), 'test.i18n.getde', 'Should return the string in the current lang')
       i18n.setLanguage('rg')
-      test.equal(i18n.get('test.i18n.geten'), 'test.i18n.getrg', 'Should be able to handle more that two languages')
+      test.equal(i18n.get('i18n.get'), 'test.i18n.getrg', 'Should be able to handle more that two languages')
       if(Meteor.isClient) {
-        Tracker.autorun(function () {
-          testString = i18n.get('test.i18n.geten')
+        autorun(function () {
+          testString = i18n.get('i18n.get')
         })
         i18n.add({
-          en: 'test.i18n.geten',
-          de: 'test.i18n.getde',
-          rg: 'test.i18n.getrg_new'
-        }, function () {
-          Meteor.setTimeout(function () {
-            test.equal(testString, 'test.i18n.getrg_new', 'get should react to changes in the data')
-            clearState(done)
-          },0)
+          'i18n.get': {
+            en: 'test.i18n.geten',
+            de: 'test.i18n.getde',
+            rg: 'test.i18n.getrg_new'
+          }
+        })
+        autorun(function () {
+          if(i18n.get('i18n.get') === 'test.i18n.getrg_new')
+          test.equal(testString, 'test.i18n.getrg_new', 'get should react to changes in the data')
+          clearState(done)
         })
       } else {
         clearState(done)
@@ -131,12 +149,16 @@ setTimeout(function () {
     i18n.addLanguage('de', 'Deutsch')
     i18n.addLanguage('rg', 'Rumantsch')
     i18n.add({
-      en: 'test.i18n.getAllen',
-      de: 'test.i18n.getAllde',
-      rg: 'test.i18n.getAllrg'
-    }, function () {
+      'test.i18n.getAll': {
+        en: 'test.i18n.getAllen',
+        de: 'test.i18n.getAllde',
+        rg: 'test.i18n.getAllrg'
+      }
+    })
+    autorun(function () {
+      if(i18n.getAll('test.i18n.getAll'))
       test.equal(
-        i18n.getAll('test.i18n.getAllen'),
+        i18n.getAll('test.i18n.getAll'),
         {
           en: 'test.i18n.getAllen',
           de: 'test.i18n.getAllde',
