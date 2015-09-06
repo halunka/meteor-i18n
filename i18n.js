@@ -49,60 +49,16 @@ i18n.listLanguages = function i18nListLanguages () {
   })
 }
 
-function maybeGet (obj, key) {
-  return obj ? obj[key] : ''
-}
-
-function genObject (key, value, obj) {
-  obj = obj || {}
-  obj[key] = value
-  return obj
-}
-
-function queryWithKey (key) {
-  return genObject(escKey(key), {$exists: true})
-}
-
-function flattenObj (obj, last, parent) {
-  return _.reduce(
-    obj,
-    function (memo, value, key) {
-      var newKey = parent ? [parent, key].join('.') : key
-      if (typeof value === 'object') {
-        _.extend(memo, flattenObj(value, last, newKey))
-      } else {
-        if (last) {
-          memo[parent] ? memo[parent][key] = value : memo[parent] = genObject(key, value)
-        } else {
-          memo[newKey] = value
-        }
-      }
-      return memo
-    },
-  {})
-}
-
-function escKey (key) {
-  return key.split('.').join('-')
-}
-
-function escKeysObj (obj) {
-  return _.object(_.map(_.keys(obj), escKey), _.values(obj))
-}
-
 if(Meteor.isServer) {
 
   i18n.add = function i18nAdd (data, lang, parent) {
-    data = flattenObj(data, !lang)
-    data = escKeysObj(data)
-    _.each(data, insert.bind(null, lang))
-  }
-
-  function insert (lang, translation, key) {
-    return i18n.db.upsert(
-      ( i18n.db.findOne(queryWithKey(key)) || {} )._id,
-      { $set: genObject(lang ? [key, lang].join('.') : key, translation) }
-    )
+    console.log(flattenObj(data, !lang))
+    _.each(escKeysObj(flattenObj(data, !lang)), function (translation, key) {
+      i18n.db.upsert(
+        ( i18n.db.findOne(queryWithKey(key)) || {} )._id,
+        { $set: genObject(lang ? [key, lang].join('.') : key, translation) }
+      )
+    })
   }
 
   Meteor.publish('i18n:all', function () {
