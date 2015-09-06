@@ -84,9 +84,11 @@ Meteor.setTimeout(function () {
       test.equal(i18n.get('i18nAddTest', 'de'), 'test.i18n.add:de', 'Insert the object passed')
     })
     i18n.add({
-      'test.i18n.add:Multi:1': 'test.i18n.add:Multi:en:1',
-      'test.i18n.add:Multi:2': 'test.i18n.add:Multi:en:2',
-      'test.i18n.add:Multi:3': 'test.i18n.add:Multi:en:3'
+      test: {
+        'i18n.add:Multi:1': 'test.i18n.add:Multi:en:1',
+        'i18n.add:Multi:2': 'test.i18n.add:Multi:en:2',
+        'i18n.add:Multi:3': 'test.i18n.add:Multi:en:3'
+      }
     }, 'en')
     i18n.add({
       'test.i18n.add:Multi:1': 'test.i18n.add:Multi:de:1',
