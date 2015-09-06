@@ -52,7 +52,6 @@ i18n.listLanguages = function i18nListLanguages () {
 if(Meteor.isServer) {
 
   i18n.add = function i18nAdd (data, lang, parent) {
-    console.log(flattenObj(data, !lang))
     _.each(escKeysObj(flattenObj(data, !lang)), function (translation, key) {
       i18n.db.upsert(
         ( i18n.db.findOne(queryWithKey(key)) || {} )._id,
