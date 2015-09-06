@@ -52,6 +52,25 @@ Template.registerHelper('_', i18n.get)
 ```
 
 ## API
+
+### translations.i18n.json
+`halunka:i18n` adds the contents of files with the `.i18n.json` extension to the database.
+Example:
+```json
+[
+  {
+    "en": "Hello Dolly",
+    "de": "Hallo Dolly",
+    "it": "Ciao Dolly"
+  },
+  {
+    "en": "Hello Sam",
+    "de": "Hallo Sam",
+    "it": "Ciao Sam"
+  }
+]
+```
+
 ### i18n.add(translations, callback) - _common_
 Adds a translation to the DB. Translations can be an object or an array of objects.
 
@@ -98,4 +117,3 @@ An interface to `i18n.get`.
 An interface to `i18n.listLang`.
 
 # TODO
-* read JSON files
