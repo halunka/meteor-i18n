@@ -1,12 +1,17 @@
 function clearState (cb) {
   i18n.state.keys = {}
-  if(Meteor.isServer) return i18n.db.remove({}, cb)
-  if(cb) return cb()
+  if(Meteor.isServer) {
+    i18n.db.remove({}, cb)
+  } else {
+    Meteor.call('remove', function () {
+      if(cb) cb()
+    })
+  }
 }
 
 function autorun (cb) {
   if(Meteor.isServer)
-    Meteor.setTimeout(cb, 10)
+    Meteor.setTimeout(cb, 100)
   else
     Tracker.autorun(cb)
 }
@@ -18,7 +23,10 @@ if(Meteor.isServer) {
     remove: function () { return true }
   })
   Meteor.methods({
-    'i18n:add': i18n.add
+    'i18n:add': i18n.add,
+    'remove': function (cb) {
+      i18n.db.remove({}, cb)
+    }
   })
 } else {
   i18n.add = function (data, lang) {
@@ -158,7 +166,7 @@ Meteor.setTimeout(function () {
       }
     })
     autorun(function () {
-      if(i18n.getAll('test.i18n.getAll'))
+      if(!i18n.getAll('test.i18n.getAll').de) return
       test.equal(
         i18n.getAll('test.i18n.getAll'),
         {
