@@ -13,7 +13,7 @@ flattenObj = function flattenObj (obj, last, par, newObj) {
   _.each(obj, function (value, key) {
     var newKey = par ? [par, key].join('.') : key
     if (typeof value === 'object') return flattenObj(value, last, newKey, newObj)
-    if (last) newObj[par] ? newObj[par][key] = value : newObj[par] = genObject(key, value)
+    if (last) return newObj[par] ? newObj[par][key] = value : newObj[par] = genObject(key, value)
     newObj[newKey] = value
   })
   return newObj
