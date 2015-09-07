@@ -1,6 +1,6 @@
 Package.describe({
   name: 'halunka:i18n',
-  version: '0.0.6',
+  version: '0.0.7',
   summary: 'Lightweight, reactive, isomorphic, extendable i18n package for meteor using MongoDB',
   git: 'https://github.com/halunka/meteor-i18n'
 })
