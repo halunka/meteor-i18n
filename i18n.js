@@ -74,7 +74,7 @@ if(Meteor.isServer) {
 
 } else {
   Template.registerHelper('i18nget', i18n.get)
-  Template.registerHelper('i18nlist', i18n.listLanguage)
+  Template.registerHelper('i18nlist', i18n.listLanguages)
 
   i18n.loadAll = function i18nLoadAll (cb) {
     Meteor.subscribe('i18n:all', function () {
