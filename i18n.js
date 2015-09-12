@@ -16,13 +16,13 @@ i18n.db.find().observe({
   removed: i18n.depChanged
 })
 
-i18n.get = function i18nget (key, lang) {
+i18n.get = function i18nGet (key, lang/*, rest*/) {
   lang = typeof lang == 'string' ? lang : i18n.getLanguage()
-  return maybeGet(i18n.reactiveQuery({key: key}), lang)
+  return joinFormat(maybeGet(i18n.reactiveQuery({key: key}), lang), _.rest(arguments, 2))
 }
 
 i18n.getAll = function i18nGetAll (key) {
-  return i18n.reactiveQuery({key: key})
+  return joinFormatObj(i18n.reactiveQuery({key: key}), _.rest(arguments))
 }
 
 i18n.reactiveQuery = function i18nReactiveQuery (query) {
@@ -40,7 +40,7 @@ i18n.setLanguage = function i18nSet (lang) {
   return i18n.state.set('currLang', lang)
 }
 
-i18n.getLanguage = function i18nGet () {
+i18n.getLanguage = function i18nGetLanguage () {
   return i18n.state.get('currLang')
 }
 
@@ -56,7 +56,7 @@ i18n.listLanguages = function i18nListLanguages () {
 if(Meteor.isServer) {
 
   i18n.add = function i18nAdd (data, lang, parent) {
-    _.each(flattenObj(data, !lang), function (translation, key) {
+    _.each(splitFormat(flattenObj(data, !lang)), function (translation, key) {
       i18n.db.upsert(
         ( i18n.db.findOne({key: key}) || {} )._id,
         { $set: _.extend({ key: key }, lang ? genObject(lang, translation) : translation) }

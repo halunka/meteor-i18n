@@ -1,5 +1,5 @@
 maybeGet = function maybeGet (obj, key) {
-  return obj ? obj[key] : ''
+  return obj && obj[key] ? obj[key] : ['']
 }
 
 genObject = function genObject (key, value, obj) {
@@ -17,4 +17,23 @@ flattenObj = function flattenObj (obj, last, par, newObj) {
     newObj[newKey] = value
   })
   return newObj
+}
+
+splitFormat = function splitFormat (obj) {
+  _.each(obj, function (thing, key) {
+    if(typeof thing === 'object') obj[key] = splitFormat(thing)
+    if(typeof thing === 'string') obj[key] = thing.split('%s')
+  })
+  return obj
+}
+
+joinFormat = function (arr, args) {
+  return arr.map(function (elem, i) { return elem + (args[i] || '') }).join('')
+}
+
+joinFormatObj = function (obj, args) {
+  _.each(obj, function (elem, key) {
+    obj[key] = joinFormat(elem, args)
+  })
+  return obj
 }
