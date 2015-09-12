@@ -154,6 +154,24 @@ Meteor.setTimeout(function () {
     })
   })
 
+  Tinytest.addAsync('i18n.get:patternMatching', function (test, done) {
+    i18n.addLanguage('en', 'English')
+    i18n.add({
+      'i18n.get:patternMatching': {
+        en: 'en:i18n.get:%spattern%sMatching'
+      }
+    })
+    autorun(function () {
+      if(!i18n.get('i18n.get:patternMatching', 'en')) return
+      test.equal(
+        i18n.get('i18n.get:patternMatching', 'en', '1', '2'),
+        'en:i18n.get:1pattern2Matching',
+        'Should replace %s with the last parametes'
+      )
+      done()
+    })
+  })
+
   Tinytest.addAsync('i18n.getAll', function (test, done) {
     i18n.addLanguage('en', 'English')
     i18n.addLanguage('de', 'Deutsch')
