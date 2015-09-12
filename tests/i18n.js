@@ -158,17 +158,30 @@ Meteor.setTimeout(function () {
     i18n.addLanguage('en', 'English')
     i18n.add({
       'i18n.get:patternMatching': {
-        en: 'en:i18n.get:%spattern%sMatching'
+        en: '%sen:i18n.get:pattern%sMatching'
       }
     })
     autorun(function () {
       if(!i18n.get('i18n.get:patternMatching', 'en')) return
       test.equal(
         i18n.get('i18n.get:patternMatching', 'en', '1', '2'),
-        'en:i18n.get:1pattern2Matching',
+        '1en:i18n.get:pattern2Matching',
         'Should replace %s with the last parametes'
       )
-      done()
+      i18n.add({
+        'i18n.get:patternMatching:escaped': {
+          en: 'en:i18n.get:%\\spattern%\\sMatching'
+        }
+      })
+      autorun(function () {
+        if(!i18n.get('i18n.get:patternMatching:escaped', 'en')) return
+        test.equal(
+          i18n.get('i18n.get:patternMatching:escaped', 'en'),
+          'en:i18n.get:%spattern%sMatching',
+          'Should not replace ecaped % signs'
+        )
+        done()
+      })
     })
   })
 

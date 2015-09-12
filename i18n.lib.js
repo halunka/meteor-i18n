@@ -22,7 +22,11 @@ flattenObj = function flattenObj (obj, last, par, newObj) {
 splitFormat = function splitFormat (obj) {
   _.each(obj, function (thing, key) {
     if(typeof thing === 'object') obj[key] = splitFormat(thing)
-    if(typeof thing === 'string') obj[key] = thing.split('%s')
+    if(typeof thing === 'string') {
+      obj[key] = _.map(thing.split('%s'), function (el) {
+        return replaceAll(el, '%\\s', '%s')
+      })
+    }
   })
   return obj
 }
@@ -36,4 +40,9 @@ joinFormatObj = function (obj, args) {
     obj[key] = joinFormat(elem, args)
   })
   return obj
+}
+
+replaceAll = function (str, where, that) {
+  while(str.indexOf(where) > -1) str = str.replace(where, that)
+  return str
 }
