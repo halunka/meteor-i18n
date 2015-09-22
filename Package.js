@@ -7,12 +7,14 @@ Package.describe({
 
 Package.onUse(function (api) {
   api.export('i18n')
-  api.versionsFrom('METEOR@1.1')
+  api.versionsFrom('METEOR@1.2')
   api.use([
+    'underscore',
+    'ecmascript',
+    'promise',
     'reactive-dict',
     'mongo',
     'templating',
-    'underscore',
     'tracker'
   ])
   api.addFiles([
@@ -27,6 +29,6 @@ Package.registerBuildPlugin({
 })
 
 Package.onTest(function (api) {
-  api.use(['tinytest', 'halunka:i18n', 'underscore', 'reactive-dict'])
+  api.use(['tinytest', 'halunka:i18n', 'underscore', 'reactive-dict', 'tracker'])
   api.addFiles('tests/i18n.js')
 })

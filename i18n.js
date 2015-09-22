@@ -4,11 +4,7 @@ i18n.db = new Mongo.Collection('halunka:i18n')
 i18n.state = new ReactiveDict('i18nValues')
 i18n.state.set('langs', {})
 i18n.dep = new Tracker.Dependency
-//i18n.depChanged = i18n.dep.changed.bind(i18n.dep)
-i18n.depChanged = function () {
-  if(i18n.db.find().count() === 12) console.log(i18n.db.find().fetch())
-  i18n.dep.changed()
-}
+i18n.depChanged = i18n.dep.changed.bind(i18n.dep)
 
 i18n.db.find().observe({
   addded: i18n.depChanged,
@@ -16,13 +12,13 @@ i18n.db.find().observe({
   removed: i18n.depChanged
 })
 
-i18n.get = function i18nGet (key, lang/*, rest*/) {
+i18n.get = function i18nGet (key, lang, ...vars) {
   lang = typeof lang == 'string' ? lang : i18n.getLanguage()
-  return joinFormat(maybeGet(i18n.reactiveQuery({key: key}), lang), _.rest(arguments, 2))
+  return joinFormat(maybeGet(i18n.reactiveQuery({key: key}), lang), vars)
 }
 
-i18n.getAll = function i18nGetAll (key) {
-  return joinFormatObj(i18n.reactiveQuery({key: key}), _.rest(arguments))
+i18n.getAll = function i18nGetAll (key, ...vars) {
+  return joinFormatObj(i18n.reactiveQuery({key: key}), vars)
 }
 
 i18n.reactiveQuery = function i18nReactiveQuery (query) {
@@ -45,21 +41,20 @@ i18n.getLanguage = function i18nGetLanguage () {
 }
 
 i18n.listLanguages = function i18nListLanguages () {
-  return _.map(i18n.state.get('langs'), function (val, key) {
-    return {
-      key: key,
-      name: val
-    }
-  })
+  return _.map(i18n.state.get('langs'), (name, key) => { key, name })
 }
 
 if(Meteor.isServer) {
-
   i18n.add = function i18nAdd (data, lang, parent) {
-    _.each(splitFormat(flattenObj(data, !lang)), function (translation, key) {
+    _.each(splitFormat(flattenObj(data, !lang)), (translation, key) => {
       i18n.db.upsert(
         ( i18n.db.findOne({key: key}) || {} )._id,
-        { $set: _.extend({ key: key }, lang ? genObject(lang, translation) : translation) }
+        {$set: _.extend(
+          { key: key },
+          lang
+            ? {[lang]: translation}
+            : translation
+        )}
       )
     })
   }

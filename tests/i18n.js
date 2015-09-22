@@ -11,7 +11,7 @@ function clearState (cb) {
 
 function autorun (cb) {
   if(Meteor.isServer)
-    Meteor.setTimeout(cb, 100)
+    Meteor.setTimeout(cb, 50)
   else
     Tracker.autorun(cb)
 }
@@ -84,12 +84,12 @@ Meteor.setTimeout(function () {
       if(!(allTrs && allTrs.en && allTrs.de)) return
       if(comp) comp.stop()
       test.isTrue(i18n.db.find().count() > 0, 'Add a new translation')
+      test.equal(i18n.get('i18nAddTest', 'de'), 'test.i18n.add:de', 'Insert the object passed')
       i18n.add({i18nAddTest: 'test.i18n.add'}, 'en')
       autorun(function () {
         if(i18n.get('i18nAddTest') === 'test.i18n.add')
         test.equal(i18n.get('i18nAddTest'), 'test.i18n.add', 'Use upsert')
       })
-      test.equal(i18n.get('i18nAddTest', 'de'), 'test.i18n.add:de', 'Insert the object passed')
     })
     i18n.add({
       test: {

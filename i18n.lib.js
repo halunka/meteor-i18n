@@ -2,16 +2,14 @@ maybeGet = function maybeGet (obj, key) {
   return obj && obj[key] ? obj[key] : ['']
 }
 
-genObject = function genObject (key, value, obj) {
-  obj = obj || {}
+genObject = function genObject (key, value, obj = {}) {
   obj[key] = value
   return obj
 }
 
-flattenObj = function flattenObj (obj, last, par, newObj) {
-  newObj = newObj || {}
+flattenObj = function flattenObj (obj, last, par, newObj = {}) {
   _.each(obj, function (value, key) {
-    var newKey = par ? [par, key].join('.') : key
+    var newKey = par ? `${par}.${key}` : key
     if (typeof value === 'object') return flattenObj(value, last, newKey, newObj)
     if (last) return newObj[par] ? newObj[par][key] = value : newObj[par] = genObject(key, value)
     newObj[newKey] = value
@@ -32,11 +30,11 @@ splitFormat = function splitFormat (obj) {
 }
 
 joinFormat = function (arr, args) {
-  return arr.map(function (elem, i) { return elem + (args[i] || '') }).join('')
+  return arr.map((elem, i) => elem + (args[i] || '')).join('')
 }
 
 joinFormatObj = function (obj, args) {
-  _.each(obj, function (elem, key) {
+  _.each(obj, (elem, key) => {
     obj[key] = joinFormat(elem, args)
   })
   return obj
