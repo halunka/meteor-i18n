@@ -158,7 +158,7 @@ Meteor.setTimeout(function () {
     i18n.addLanguage('en', 'English')
     i18n.add({
       'i18n.get:patternMatching': {
-        en: '%sen:i18n.get:pattern%sMatching'
+        en: '${s}en:i18n.get:pattern${s}Matching'
       }
     })
     autorun(function () {
@@ -166,18 +166,18 @@ Meteor.setTimeout(function () {
       test.equal(
         i18n.get('i18n.get:patternMatching', 'en', '1', '2'),
         '1en:i18n.get:pattern2Matching',
-        'Should replace %s with the last parametes'
+        'Should replace ${s} with the last parametes'
       )
       i18n.add({
         'i18n.get:patternMatching:escaped': {
-          en: 'en:i18n.get:%\\spattern%\\sMatching'
+          en: 'en:i18n.get:\\$\\{s\\}pattern${s\\}Matching'
         }
       })
       autorun(function () {
         if(!i18n.get('i18n.get:patternMatching:escaped', 'en')) return
         test.equal(
           i18n.get('i18n.get:patternMatching:escaped', 'en'),
-          'en:i18n.get:%spattern%sMatching',
+          'en:i18n.get:${s}pattern${s}Matching',
           'Should not replace ecaped % signs'
         )
         done()

@@ -21,9 +21,11 @@ splitFormat = function splitFormat (obj) {
   _.each(obj, function (thing, key) {
     if(typeof thing === 'object') obj[key] = splitFormat(thing)
     if(typeof thing === 'string') {
-      obj[key] = _.map(thing.split('%s'), function (el) {
-        return replaceAll(el, '%\\s', '%s')
-      })
+      obj[key] = thing.split(/\$\{[^\}]*[^\\]{1}\}/g).map((elem) => elem
+        .replace(/\\\$/g, '$')
+        .replace(/\\\{/g, '{')
+        .replace(/\\\}/g, '}')
+      )
     }
   })
   return obj
@@ -38,9 +40,4 @@ joinFormatObj = function (obj, args) {
     obj[key] = joinFormat(elem, args)
   })
   return obj
-}
-
-replaceAll = function (str, where, that) {
-  while(str.indexOf(where) > -1) str = str.replace(where, that)
-  return str
 }
