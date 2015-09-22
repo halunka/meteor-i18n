@@ -1,4 +1,4 @@
-# meteor-i18n - 1.0.0
+# meteor-i18n - 1.1.0
 Lightweight, reactive, isomorphic, extendable i18n package for meteor using MongoDB
 
 ## Usage
@@ -134,4 +134,4 @@ An interface to `i18n.get`.
 An interface to `i18n.listLang`.
 
 # TODO
-* load specific groups
+* document string templating
