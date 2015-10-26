@@ -1,4 +1,4 @@
-# meteor-i18n - 1.1.0
+# meteor-i18n - 1.1.1
 Lightweight, reactive, isomorphic, extendable i18n package for meteor using MongoDB
 
 ## Usage

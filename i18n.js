@@ -41,7 +41,7 @@ i18n.getLanguage = function i18nGetLanguage () {
 }
 
 i18n.listLanguages = function i18nListLanguages () {
-  return _.map(i18n.state.get('langs'), (name, key) => { key, name })
+  return _.map(i18n.state.get('langs'), (name, key) => { return { key, name }})
 }
 
 if(Meteor.isServer) {

@@ -67,8 +67,9 @@ Meteor.setTimeout(function () {
     i18n.addLanguage('en', 'English')
     i18n.addLanguage('de', 'Other')
     test.equal(i18n.listLanguages().length, 2, 'Return an array of all the registered languages')
+    test.equal(i18n.listLanguages()[0], { name: 'English', key: 'en' }, 'Should return an object')
     clearState(done)
-  })
+})
 
   Tinytest.addAsync('i18n.add', function (test, done) {
     i18n.setLanguage('en')
